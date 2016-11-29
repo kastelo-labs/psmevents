@@ -33,24 +33,28 @@ func (d *peekingDecoder) NextByte() (byte, error) {
 		if err != nil || n != 1 {
 			break
 		}
+
 		if len(bytes.TrimSpace(bs)) == 0 {
 			continue
 		}
+
 		return bs[0], nil
 	}
 
 	// OK, nothing in the json.Decoder buffer, lets peek in the buffered
 	// reader instead.
 	for {
-		if bs, err := d.rd.Peek(1); err != nil {
+		bs, err := d.rd.Peek(1)
+		if err != nil {
 			return 0, err
-		} else {
-			if len(bytes.TrimSpace(bs)) == 0 {
-				// It was a space
-				d.rd.Discard(1)
-				continue
-			}
-			return bs[0], nil
 		}
+
+		if len(bytes.TrimSpace(bs)) == 0 {
+			// It was a space
+			d.rd.Discard(1)
+			continue
+		}
+
+		return bs[0], nil
 	}
 }

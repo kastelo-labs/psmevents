@@ -162,16 +162,16 @@ func printEventWithDiff(event map[string]interface{}, i int) error {
 			Context:  diffContextLines,
 		}
 
-		if text, err := difflib.GetUnifiedDiffString(diff); err != nil {
+		text, err := difflib.GetUnifiedDiffString(diff)
+		if err != nil {
 			return err
-		} else {
-			fmt.Println(text)
 		}
 
+		fmt.Println(text)
 		return nil
-	} else {
-		return errors.New("not diffable")
 	}
+
+	return errors.New("not diffable")
 }
 
 func printEvent(event map[string]interface{}, i int) {

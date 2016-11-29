@@ -40,6 +40,12 @@ case "${1:-default}" in
 		GOOS=darwin GOARCH=amd64 pkg
 		;;
 
+	upload)
+		for f in *.tar.gz *.zip ; do
+			relup kastelo/psmevents "$version" "$f"
+		done
+		;;
+
 	default)
 		go install -ldflags "-w -X main.version=$version"
 		;;

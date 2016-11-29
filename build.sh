@@ -15,11 +15,6 @@ pkg() {
 	cp README.md LICENSE "$dst"
 	go build -o "$dst/psmevents" -ldflags "-w -X main.Version=$version"
 
-	if [[ -f ~/signingkeys/calmh.priv ]] ; then
-		[ -f $dst/psmevents ] && stsigtool sign ~/signingkeys/calmh.priv "$dst/psmevents" > "$dst/psmevents.sig"
-		[ -f $dst/psmevents.exe ] && stsigtool sign ~/signingkeys/calmh.priv "$dst/psmevents.exe" > "$dst/psmevents.exe.sig"
-	fi
-
 	if [[ "$GOOS" == "windows" ]] ; then
 		pushd build
 		zip -r "../$name.zip" "$name"

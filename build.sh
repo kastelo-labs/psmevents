@@ -13,7 +13,7 @@ pkg() {
 
 	mkdir -p "$dst"
 	cp README.md LICENSE "$dst"
-	go build -o "$dst/psmevents" -ldflags "-w -X main.Version=$version"
+	go build -o "$dst/psmevents" -ldflags "-w -X main.version=$version"
 
 	if [[ "$GOOS" == "windows" ]] ; then
 		pushd build
@@ -41,6 +41,6 @@ case "${1:-default}" in
 		;;
 
 	default)
-		go install -ldflags "-w -X main.Version=$version"
+		go install -ldflags "-w -X main.version=$version"
 		;;
 esac

@@ -18,6 +18,7 @@ var (
 	enableUpdateDiff       = true
 	enableSessionEvents    = true
 	enableSubscriberEvents = true
+	enableSessionGyEvents  = false
 	enableGroupEvents      = false
 	diffContextLines       = 2
 )
@@ -26,6 +27,7 @@ func init() {
 	flag.BoolVar(&enableUpdateDiff, "diff", enableUpdateDiff, "Use diff for object.updated events")
 	flag.IntVar(&diffContextLines, "diff-context", diffContextLines, "Number of lines in diff context")
 	flag.BoolVar(&enableGroupEvents, "groups", enableGroupEvents, "Subscribe to group events")
+	flag.BoolVar(&enableSessionGyEvents, "session-gy", enableSessionGyEvents, "Subscribe to session Gy events")
 	flag.BoolVar(&enableSessionEvents, "sessions", enableSessionEvents, "Subscribe to session events")
 	flag.BoolVar(&enableSubscriberEvents, "subscribers", enableSubscriberEvents, "Subscribe to subscriber events")
 }
@@ -84,6 +86,13 @@ func main() {
 				os.Exit(1)
 			}
 			fmt.Println("Subscribed to group events")
+		}
+		if enableSessionGyEvents {
+			if err := subscribeSessionGy(conn, pr); err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+			fmt.Println("Subscribed to session Gy events")
 		}
 
 		timestampEvents = true
@@ -200,6 +209,14 @@ func subscribeSubscribers(conn net.Conn, pr *peekingDecoder) error {
 
 func subscribeGroups(conn net.Conn, pr *peekingDecoder) error {
 	_, err := fmt.Fprintln(conn, `{"id":1, "method": "events.setObjectEventFilter", "params":["group", ["created", "updated", "deleted"]]}`)
+	if err != nil {
+		return err
+	}
+	return readResult(pr)
+}
+
+func subscribeSessionGy(conn net.Conn, pr *peekingDecoder) error {
+	_, err := fmt.Fprintln(conn, `{"id":1, "method": "events.setObjectEventFilter", "params":["sessionGyServices", ["created", "updated", "deleted"]]}`)
 	if err != nil {
 		return err
 	}
